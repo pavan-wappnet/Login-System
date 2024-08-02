@@ -67,8 +67,10 @@ $(document).ready(function () {
             dataType: "json",
             success: function (response) {
                 if (response.status === "success") {
+                    //$("#passwordMessage").text(response.message).css('color', 'green');
                     alert(response.message);
                 } else {
+                    //$("#passwordMessage").text(response.message).css('color', 'red');
                     alert(response.message);
                 }
             },
@@ -98,10 +100,9 @@ $(document).ready(function () {
                     alert(response.message);
                 }
             },
-            error: function (jqXHR, textStatus, errorThrown) {
-                alert("An error occurred: " + textStatus + " - " + errorThrown);
-                console.log(errorThrown);
-            },
+            // error: function (jqXHR, textStatus, errorThrown) {
+            //     alert("An error occurred: " + textStatus + " - " + errorThrown);
+            // },
         });
     });
 
