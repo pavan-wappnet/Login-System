@@ -169,6 +169,53 @@ class User {
             return ['status'=>'success', 'message' => 'Error updating profile picture'];
         }
     }
+
+    public function generateResetCode($username) {
+        $stmt = $this->conn->prepare("SELECT * FROM users WHERE username=?");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if($result->num_rows === 0){
+            return ['status' => 'error', 'message' => 'Invalid username.'];
+        }
+
+        $user = $result->fetch_assoc();
+        $resetCode = bin2hex(random_bytes(4));
+        $expiry = date('Y-m-d H:i:s', time() + 3600);
+
+        $stmt = $this->conn->prepare("UPDATE users SET reset_token = ?, reset_token_expiry = ? WHERE username = ?");
+        $stmt->bind_param("sss", $resetCode, $expiry, $username);
+        if($stmt->execute()){
+            return ['status' => 'success', 'message' => 'Reset code generated.Your reset code is: ' . $resetCode];
+        }else {
+            return ['status' => 'error', 'message' => 'Error generating reset code.'];
+        }
+    }
+
+    public function resetPasswordWithCode($username, $resetCode, $newPassword) {
+        $stmt = $this->conn->prepare("SELECT * FROM users WHERE username = ? AND reset_token = ?");
+        $currentTime = date('Y-m-d H:i:s', time() + 3600);
+        $stmt->bind_param("sss", $username, $resetCode, $currentTime);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if($result->nums_rows === 0){
+            return ['status' => 'error', 'message' => 'Invalid reset code.'];
+        }
+
+        $user = $result->fetch_assoc();
+
+        $newPasswordHash = password_hash($newPassword, PASSWORD_BCRYPT);
+
+        $stmt = $this->conn->prepare("UPDATE users SET password = ?, reset_token = NULL, reset_token_expiry = NULL WHERE username = ?");
+        $stmt->bind_param("ss", $newPasswordHash, $username);
+        if($stmt->execute()){
+            return ['status' => 'success', 'message' => 'Password reset successful.'];
+        }else {
+            return ['status' => 'error', 'message' => 'Error resetting password.'];
+        }
+    }
 }
 
 ?>
