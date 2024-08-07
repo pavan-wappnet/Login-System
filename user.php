@@ -7,6 +7,58 @@ class User {
         $this->conn = $db;
     }
 
+    public function setRememberMeToken($username) {
+        $token = bin2hex(random_bytes(16));
+        $expiry = time() + (86400 * 30);
+
+        setcookie('rememberMe', $token, $expiry, '/', '', false, true);
+
+        $sql = "UPDATE users SET remember_me_token = ?, remember_me_expiry = ? WHERE username = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("sis", $token, $expiry, $username);
+        if($stmt->execute()) {
+            return true;      
+        } else {
+            return false;
+        }        
+    }
+
+    public function verifyRememberMeToken($token) {
+        $sql = "SELECT * FROM users WHERE remember_me_token = ? AND remember_me_expiry > ?";
+        $stmt = $this->conn->prepare($sql);
+        $currentTime = time();
+        $stmt->bind_param("si", $token, $currentTime);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            return $result->fetch_assoc();
+        } else {
+            return false;
+        }
+    }
+
+    public function login($username, $password, $rememberMe) {
+        $stmt = $this->conn->prepare("SELECT * FROM users WHERE username = ?");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($result->num_rows === 0) {
+            return ['status' => 'error', 'message' => 'Invalid username or password.'];
+        }
+
+        $user = $result->fetch_assoc();
+        if (password_verify($password, $user['password'])) {
+            if ($rememberMe) {
+                $this->setRememberMeToken($username);
+            }
+            return ['status' => 'success', 'message' => 'Login successful.'];
+        } else {
+            return ['status' => 'error', 'message' => 'Invalid username or password.'];
+        }
+    }
+
     public function register($username, $password, $email, $profilePicture) {
         $stmt = $this->conn->prepare("SELECT * FROM users WHERE username = ? OR email = ?");
         $stmt->bind_param("ss", $username, $email);
@@ -47,24 +99,6 @@ class User {
             return ['status' => 'success', 'message' => 'User registered successfully.'];
         } else {
             return ['status' => 'error', 'message' => 'Error registering user.'];
-        }
-    }
-
-    public function login($username, $password) {
-        $stmt = $this->conn->prepare("SELECT * FROM users WHERE username = ?");
-        $stmt->bind_param("s", $username);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        
-        if ($result->num_rows === 0) {
-            return ['status' => 'error', 'message' => 'Invalid username or password.'];
-        }
-
-        $user = $result->fetch_assoc();
-        if (password_verify($password, $user['password'])) {
-            return ['status' => 'success', 'message' => 'Login successful.'];
-        } else {
-            return ['status' => 'error', 'message' => 'Invalid username or password.'];
         }
     }
 

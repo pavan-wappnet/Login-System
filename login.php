@@ -8,9 +8,10 @@ $user = new User($conn);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];
-    $password = $_POST['password']; 
+    $password = $_POST['password'];
+    $rememberMe = isset($_POST['rememberMe']);
 
-    $loginResponse = $user->login($username, $password);
+    $loginResponse = $user->login($username, $password, $rememberMe);
     if($loginResponse['status'] === 'success') {
         $_SESSION['username'] = $username;
         $response['status'] = 'success';

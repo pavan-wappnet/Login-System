@@ -1,6 +1,8 @@
 <?php
 session_start();
 include 'includes/db.php';
+include 'check_remember_me.php';
+
 
 // Check if the user is logged in
 if (!isset($_SESSION['username'])) {

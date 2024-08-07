@@ -29,8 +29,9 @@ $(document).ready(function () {
 
         var username = $("#username").val().trim();
         var password = $("#password").val().trim();
+        var rememberMe = $("#rememberMe").is(":checked");
 
-        if (username == "" || password == "") {
+        if (username === "" || password === "") {
             alert("Please fill in both fields.");
             return;
         }
@@ -41,6 +42,7 @@ $(document).ready(function () {
             data: {
                 username: username,
                 password: password,
+                rememberMe: rememberMe
             },
             dataType: "json",
             success: function (response) {
