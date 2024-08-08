@@ -109,73 +109,27 @@ $(document).ready(function () {
         });
     });
 
-    $("#forgotPasswordForm").on("submit", function(event) {
-        event.preventDefault();
+    $('#forgotPasswordForm').submit(function(event) {
+        event.preventDefault(); // Prevent the default form submission
 
-        var username = $("#fp_username").val().trim();
-
-        if (username == "") {
-            alert("Please enter your username");
-            return;
-        }
+        var username = $('#fp_username').val();
 
         $.ajax({
-            url: "forgot_password.php",
-            method: "POST",
+            url: 'forgot_password.php',
+            type: 'POST',
             data: { username: username },
-            dataType: "json",
+            dataType: 'json',
             success: function(response) {
-                if (response.status === "success") {
-                    $("#fp_message").text(response.message).css('color', 'green');
+                if (response.status === 'success') {
+                    $('#fp_message').text('Reset token: ' + response.token);
                 } else {
-                    $("#fp_message").text(response.message).css('color', 'red');
-                }   
-            },
-
-            // error: function(jqXHR, textStatus, errorThrown) {
-            //     alert(errorThrown);
-            // }
-        });
-
-    });
-
-    $("#resetPasswordForm").on("submit", function (event) {
-        event.preventDefault();
-
-        var username = $("#username").val().trim();
-        var resetCode = $("#resetCode").val().trim();
-        var newPassword = $("#newPassword").val().trim();
-        var confirmPassword = $("#confirmPassword").val().trim();
-
-        if (newPassword === "" || confirmPassword === "") {
-            alert("Please fill in all fields.");
-            return;
-        }
-
-        if(newPassword != confirmPassword){
-            alert("Passwords do not match");
-            return;
-        }
-
-        $.ajax({
-            url: "reset_password.php",
-            method: "POST",
-            data: {
-                username: username,
-                resetCode: resetCode,
-                newPassword: newPassword
-            },
-            dataType: "json",
-            success: function (response) {
-                if (response.status === "success") {
-                    $("#message").text(response.message).css('color', 'green');
-                } else {
-                    $("#message").text(response.message).css('color', 'red');
+                    $('#fp_message').text(response.message);
                 }
             },
-            error: function (jqXHR, textStatus, errorThrown) {
-                alert("An error occurred: " + textStatus + " - " + errorThrown);
-            },
+            error: function() {
+                $('#fp_message').text('An error occurred. Please try again.');
+            }
         });
-    }); 
+    });
+
 });
