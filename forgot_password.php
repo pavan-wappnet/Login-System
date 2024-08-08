@@ -1,22 +1,27 @@
 <?php
 session_start();
-include 'includes/db.php';
+
+include 'includes/db.php'; // Ensure this file sets up $conn correctly
 include 'user.php';
 
-$response = [];
 $user = new User($conn);
 
-if($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];
-    $fp_response = $user->generateResetCode($username);
 
-    if($fp_response['status'] === 'success') {
+    $token = $user->generateResetToken($username);
+
+    if ($token) {
         $_SESSION['username'] = $username;
-        $response['status'] = 'success';
-        $response['message'] = 'Reset code sent to your email.';
+        $response = [
+            'status' => 'success',
+            'token' => $token
+        ];
     } else {
-        $response['status'] = 'error';
-        $response['message'] = $fp_response['message'];
+        $response = [
+            'status' => 'error',
+            'message' => 'Could not generate reset token.'
+        ];
     }
 
     echo json_encode($response);
