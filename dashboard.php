@@ -1,11 +1,14 @@
 <?php
 session_start();
+include 'check_remember_me.php'; 
+
 if (!isset($_SESSION['username'])) {
     header("Location: index.html");
     exit();
 }
 
 include 'includes/db.php';
+
 $username = $_SESSION['username'];
 $sql = "SELECT * FROM users WHERE username='$username'";
 $result = $conn->query($sql);

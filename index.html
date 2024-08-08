@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login System</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/x-icon" href="css/login-system.jpg">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="js/script.js"></script>
 </head>
@@ -13,13 +14,19 @@
         <h2>Login</h2>
         <form action="login.php" method="POST" id="loginForm">
             <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
+            <input type="text" id="username" name="username" required autocomplete="username">
             
             <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
+            <input type="password" id="password" name="password" required autocomplete="current-password">
             
             <button type="submit">Login</button>
+            <label for="rememberMe" class="remember">
+                <input type="checkbox" id="rememberMe" name="rememberMe">
+                Remember Me
+            </label>
         </form>
+
+        <a href="forgot_password.html" class="forgot_password">Forgot Password?</a>
         <p id="message"></p>
         <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
     </div>

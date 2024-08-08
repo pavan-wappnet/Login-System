@@ -75,3 +75,16 @@ p {
     text-decoration: none;
     
 }
+
+.remember {
+    margin-top: 15px;
+}
+
+.forgot_password {
+    text-decoration: none;
+    color: red;
+    font-size: 14px;
+    margin-left: 5px;
+    margin-top: 15px;
+    display: inline-block;
+}

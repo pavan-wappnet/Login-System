@@ -29,8 +29,9 @@ $(document).ready(function () {
 
         var username = $("#username").val().trim();
         var password = $("#password").val().trim();
+        var rememberMe = $("#rememberMe").is(":checked");
 
-        if (username == "" || password == "") {
+        if (username === "" || password === "") {
             alert("Please fill in both fields.");
             return;
         }
@@ -41,6 +42,7 @@ $(document).ready(function () {
             data: {
                 username: username,
                 password: password,
+                rememberMe: rememberMe
             },
             dataType: "json",
             success: function (response) {
@@ -55,6 +57,7 @@ $(document).ready(function () {
             },
         });
     });
+
     $("#changePasswordForm").on("submit", function (event) {
         event.preventDefault(); // Prevent the form from submitting traditionally
 
@@ -103,6 +106,29 @@ $(document).ready(function () {
             // error: function (jqXHR, textStatus, errorThrown) {
             //     alert("An error occurred: " + textStatus + " - " + errorThrown);
             // },
+        });
+    });
+
+    $('#forgotPasswordForm').submit(function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        var username = $('#fp_username').val();
+
+        $.ajax({
+            url: 'forgot_password.php',
+            type: 'POST',
+            data: { username: username },
+            dataType: 'json',
+            success: function(response) {
+                if (response.status === 'success') {
+                    $('#fp_message').text('Reset token: ' + response.token);
+                } else {
+                    $('#fp_message').text(response.message);
+                }
+            },
+            error: function() {
+                $('#fp_message').text('An error occurred. Please try again.');
+            }
         });
     });
 
