@@ -105,7 +105,7 @@ class User {
     public function changePassword($username, $currentPassword, $newPassword, $confirmPassword) {
         if ($newPassword === $currentPassword) {
             return ['status' => 'error', 'message' => 'New Password cannot be same as current password.'];
-        } 
+        }
         
         if ($newPassword !== $confirmPassword) {
             return ['status' => 'error', 'message' => 'New Password do not match.'];
@@ -124,12 +124,12 @@ class User {
                     return ['status'=>'success', 'message' => 'Password updated successfully.'];
                 } else {
                     return ['status'=>'success', 'message' => 'Error updating passwoord'];
-                }        
+                }
             } else {
                 return ['status' => 'error', 'message' => 'Current password is incorrect.'];
         
             }
-        }        
+        }
     }
 
     public function updateProfilePicture($username, $profilePicture) {
@@ -167,20 +167,6 @@ class User {
             return ['status'=>'success', 'message' => 'Profile picture updated successfully.'];
         } else {
             return ['status'=>'success', 'message' => 'Error updating profile picture'];
-        }
-    }
-
-    public function generateResetToken($username) {
-        $token = bin2hex(random_bytes(16)); // Generate a random token
-        $expiry = date('Y-m-d H:i:s', strtotime('+1 hour')); // Set the expiry time to 1 hour from now
-
-        // Update the user's reset token and expiry in the database
-        $stmt = $this->conn->prepare("UPDATE users SET reset_token = ?, reset_token_expiry = ? WHERE username = ?");
-        $stmt->bind_param('sss', $token, $expiry, $username);
-        if ($stmt->execute()) {
-            return $token;
-        } else {
-            return false;
         }
     }
 }

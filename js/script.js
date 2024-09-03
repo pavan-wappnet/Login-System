@@ -1,9 +1,9 @@
 $(document).ready(function () {
     $("#signupForm").on("submit", function (event) {
         event.preventDefault();
-
+    
         var formData = new FormData(this);
-
+    
         $.ajax({
             url: "signup.php",
             method: "POST",
@@ -19,7 +19,7 @@ $(document).ready(function () {
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                $("#signupMessage").text("An error occured. Please try again.").css('color', 'red');
+                $("#signupMessage").text("An error occurred. Please try again.").css('color', 'red');
             },
         });
     });
@@ -106,29 +106,6 @@ $(document).ready(function () {
             // error: function (jqXHR, textStatus, errorThrown) {
             //     alert("An error occurred: " + textStatus + " - " + errorThrown);
             // },
-        });
-    });
-
-    $('#forgotPasswordForm').submit(function(event) {
-        event.preventDefault(); // Prevent the default form submission
-
-        var username = $('#fp_username').val();
-
-        $.ajax({
-            url: 'forgot_password.php',
-            type: 'POST',
-            data: { username: username },
-            dataType: 'json',
-            success: function(response) {
-                if (response.status === 'success') {
-                    $('#fp_message').text('Reset token: ' + response.token);
-                } else {
-                    $('#fp_message').text(response.message);
-                }
-            },
-            error: function() {
-                $('#fp_message').text('An error occurred. Please try again.');
-            }
         });
     });
 
